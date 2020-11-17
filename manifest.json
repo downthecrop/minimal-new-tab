@@ -9,6 +9,7 @@
 	"incognito": "split",
 	"permissions": [
 		"activeTab",
-		"topSites"
+		"topSites",
+		"*://*.google.com/*"
 	]
 }
