@@ -2,16 +2,13 @@ body{
   background-color: #000;
   text-align:center;
 }
-
 ul {
   list-style-type: none;
   overflow: hidden;
 }
-
 li {
   float: right;
 }
-
 li a {
   color: white;
   display: block;
@@ -92,4 +89,24 @@ li a:hover {
   border:1px solid #4885ed;
   padding: 9px 19px;
 }
+.glogo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  content:url("glogo.png");
+}
 
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
