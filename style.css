@@ -1,5 +1,38 @@
+:root {
+  --custom-bg: #000;
+  --custom-text: #fff;
+  --custom-head-text: #fff;
+  --ntp-theme-text-shadow: 0 0 16px rgba(0, 0, 0, .3);
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  grid-gap: 10px;
+  width:500px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 50px;
+}
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+}
+.tile-title {
+  font-weight: 400;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-shadow: var(--ntp-theme-text-shadow);
+  white-space: nowrap;
+  margin:auto;
+  max-width: 80px;
+  font-size: 1rem;
+}
 body{
-  background-color: #000;
+  background-color: var(--custom-bg);
   text-align:center;
 }
 ul {
@@ -10,7 +43,7 @@ li {
   float: right;
 }
 li a {
-  color: white;
+  color: var(--custom-head-text);
   display: block;
   text-align: center;
   padding: 10px 10px;
@@ -27,7 +60,7 @@ li a:hover {
 }
 .signbutton{
   background-color: #4885ed;
-  color: #fff;
+  color: var(--custom-head-text);
   border:none;
   border-radius:3px;
   padding:7px 10px;
@@ -53,13 +86,13 @@ li a:hover {
   outline:none;
 }
 .searchbar{
-  color: white;
+  color: var(--custom-text);
   height:45px;
   border:none;
   width:500px;
   font-size:16px;
   outline: none;
-  background-color: #000;
+  background-color: var(--custom-bg);
 }
 .voice{
   height:20px;
@@ -107,6 +140,6 @@ select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   -webkit-text-fill-color: white;
-  -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+  -webkit-box-shadow: 0 0 0px 1000px var(--custom-bg) inset;
   transition: background-color 5000s ease-in-out 0s;
 }

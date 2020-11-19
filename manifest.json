@@ -10,6 +10,6 @@
 	"permissions": [
 		"activeTab",
 		"topSites",
-		"*://*.google.com/*"
+		"*://suggestqueries.google.com/complete/*"
 	]
 }
