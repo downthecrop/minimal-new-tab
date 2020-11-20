@@ -20,6 +20,12 @@ function toDataURL(url, callback) {
 	xhr.send();
 }
 
+function test(i){
+	if(i === 8){
+		location.reload();
+	}
+}
+
 function getFavicons(sites,i){
 	if(localStorage.getItem(i) === null){
 		toDataURL('https://www.google.com/s2/favicons?domain='+sites[i-1].url, function(dataUrl) {
@@ -27,12 +33,9 @@ function getFavicons(sites,i){
 			localStorage.setItem(i-1,v)
 		})
 		if (i <= 8){
-			getFavicons(sites,i+1)
-			return;
+			Promise.resolve(getFavicons(sites,i+1))
+			.then(function(){if(i===8){location.reload();}})
 		}
-	}
-	if (localStorage.getItem(i) === null){
-		location.reload();
 	}
 }
 
