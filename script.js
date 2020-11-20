@@ -20,12 +20,6 @@ function toDataURL(url, callback) {
 	xhr.send();
 }
 
-function test(i){
-	if(i === 8){
-		location.reload();
-	}
-}
-
 function getFavicons(sites,i){
 	if(localStorage.getItem(i) === null){
 		toDataURL('https://www.google.com/s2/favicons?domain='+sites[i-1].url, function(dataUrl) {
