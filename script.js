@@ -9,11 +9,11 @@ function openlink(caller){
 function toDataURL(url, callback) {
 	var xhr = new XMLHttpRequest();
 	xhr.onload = function() {
-	  var reader = new FileReader();
-	  reader.onloadend = function() {
-		callback(reader.result);
-	  }
-	  reader.readAsDataURL(xhr.response);
+		var reader = new FileReader();
+		reader.onloadend = function() {
+			callback(reader.result);
+		}
+		reader.readAsDataURL(xhr.response);
 	};
 	xhr.open('GET', url);
 	xhr.responseType = 'blob';
@@ -54,8 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	chrome.topSites.get(function (sites) {
 		i = 1;
-		topSites = sites;
-
+		
 		getFavicons(sites,i)
 
 		while (i <= 8){
