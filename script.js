@@ -44,7 +44,11 @@ document.addEventListener('DOMContentLoaded', function () {
 			lastsearch = document.getElementById('ginput').value
 			fetch(url + document.getElementById('ginput').value)
 				.then(res => res.json())
-				.then(data => console.log(data))
+				.then(data => function(){
+					var e = document.createElement('div');
+					e.innerHTML = "<ul><li style='color:white'>"+data[1][0]+"</li></ul>";
+					document.getElementById('searcharea').appendChild(e)
+			}())
 			console.log("Last search: " + lastsearch);
 		}
 	}

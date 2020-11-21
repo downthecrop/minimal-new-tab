@@ -23,6 +23,21 @@
 .grid-container > div:hover {
   background-color: #1a1a1a;
 }
+.dot {
+  height: 32px;
+  width: 32px;
+  z-index: 1;
+  background-color: #1a1a1a;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot img {
+  z-index: 2;
+  margin-top: 8px;
+  margin-left: -8px;
+  position: absolute;
+  filter: drop-shadow(1px 1px 1px #000);
+}
 .tile-title {
   font-weight: 400;
   overflow: hidden;
