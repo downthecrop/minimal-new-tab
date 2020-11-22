@@ -37,18 +37,29 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 	var lastsearch = ""
 	document.getElementById('ginput').onkeyup = function () {
-		if (document.getElementById('ginput').value != lastsearch 
-			&& document.getElementById('ginput').value != ""
+		if (document.getElementById('ginput').value === ""){
+			document.getElementById('results').innerHTML = "";
+		}
+		else if (document.getElementById('ginput').value != lastsearch 
 			&& document.getElementById('ginput').value.substring(0, 8) != "https://"
 			&& document.getElementById('ginput').value.substring(0, 7) != "http://") {
 			lastsearch = document.getElementById('ginput').value
 			fetch(url + document.getElementById('ginput').value)
 				.then(res => res.json())
 				.then(data => function(){
-					var e = document.createElement('div');
-					e.innerHTML = "<ul><li style='color:white'>"+data[1][0]+"</li></ul>";
-					document.getElementById('searcharea').appendChild(e)
-			}())
+					var i = 0;
+					document.getElementById('results').innerHTML = "";
+					while (i < data[1].length){
+						var e = document.createElement('div');
+						e.innerHTML = "<div class='result-item' id='result-"+i+"'><span>"+data[1][i]+"</span></div>";
+						document.getElementById('results').appendChild(e);
+						document.getElementById('result-'+i).addEventListener("click", function(){
+							document.getElementById('ginput').value=this.textContent
+							document.getElementById('ginput').focus();
+						});
+						i += 1;
+					}
+				}())
 			console.log("Last search: " + lastsearch);
 		}
 	}
@@ -72,5 +83,20 @@ document.addEventListener('DOMContentLoaded', function () {
 			i += 1;
 		}
 	})
+
+
+	/**
+	//Chrome New Tab Style Overlapping
+	document.getElementById('ginput').addEventListener("focus", function(){
+		document.getElementsByClassName('grid-container')[0].style.visibility = "hidden";
+		document.getElementById('results').style.minHeight = "377px";
+
+	});
+	document.getElementById('ginput').addEventListener("focusout", function(){
+		document.getElementById('results').innerHTML = "";
+		document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
+		document.getElementById('results').style.minHeight = "0px";
+	});
+	*/
 
 })
