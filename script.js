@@ -1,4 +1,6 @@
 const url = "http://suggestqueries.google.com/complete/search?client=chrome&q=";
+const iconurl = "https://www.google.com/s2/favicons?domain=";
+const search = "http://www.google.com/search?q=";
 var links = [];
 
 function openlink(caller){
@@ -22,7 +24,7 @@ function toDataURL(url, callback) {
 
 function getFavicons(sites,i){
 	if(localStorage.getItem(i) === null){
-		toDataURL('https://www.google.com/s2/favicons?domain='+sites[i-1].url, function(dataUrl) {
+		toDataURL(iconurl+sites[i-1].url, function(dataUrl) {
 			v = dataUrl;
 			localStorage.setItem(i-1,v)
 		})
@@ -36,26 +38,41 @@ function getFavicons(sites,i){
 document.addEventListener('DOMContentLoaded', function () {
 	
 	var lastsearch = ""
-	document.getElementById('ginput').onkeyup = function () {
-		if (document.getElementById('ginput').value === ""){
-			document.getElementById('results').innerHTML = "";
+	var ginput = document.getElementById('ginput');
+	var results = document.getElementById('results');
+	
+	ginput.onkeyup = function () {
+		if (ginput.value === ""){
+			results.innerHTML = "";
 		}
-		else if (document.getElementById('ginput').value != lastsearch 
-			&& document.getElementById('ginput').value.substring(0, 8) != "https://"
-			&& document.getElementById('ginput').value.substring(0, 7) != "http://") {
-			lastsearch = document.getElementById('ginput').value
-			fetch(url + document.getElementById('ginput').value)
+		else if (ginput.value != lastsearch 
+			&& ginput.value.substring(0, 8) != "https://"
+			&& ginput.value.substring(0, 7) != "http://") {
+			lastsearch = ginput.value
+			fetch(url + ginput.value)
 				.then(res => res.json())
 				.then(data => function(){
 					var i = 0;
-					document.getElementById('results').innerHTML = "";
+					results.innerHTML = "";
 					while (i < data[1].length){
 						var e = document.createElement('div');
 						e.innerHTML = "<div class='result-item' id='result-"+i+"'><span>"+data[1][i]+"</span></div>";
-						document.getElementById('results').appendChild(e);
+						results.appendChild(e);
 						document.getElementById('result-'+i).addEventListener("click", function(){
-							document.getElementById('ginput').value=this.textContent
-							document.getElementById('ginput').focus();
+							
+							if (this.textContent.substring(0, 8) == "https://" || 
+								this.textContent.substring(0, 7) == "http://"){
+								location.assign(this.textContent);
+							}
+							else{
+								location.assign(search+this.textContent);
+							}
+							
+							/** Add value to search
+							 * bar without searching
+							ginput.value=this.textContent
+							ginput.focus();
+							*/
 						});
 						i += 1;
 					}
@@ -87,15 +104,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	/**
 	//Chrome New Tab Style Overlapping
-	document.getElementById('ginput').addEventListener("focus", function(){
+	ginput.addEventListener("focus", function(){
 		document.getElementsByClassName('grid-container')[0].style.visibility = "hidden";
-		document.getElementById('results').style.minHeight = "377px";
+		results.style.minHeight = "377px";
 
 	});
-	document.getElementById('ginput').addEventListener("focusout", function(){
-		document.getElementById('results').innerHTML = "";
+	ginput.addEventListener("focusout", function(){
+		results.innerHTML = "";
 		document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
-		document.getElementById('results').style.minHeight = "0px";
+		results.style.minHeight = "0px";
 	});
 	*/
 
