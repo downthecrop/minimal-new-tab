@@ -10,7 +10,8 @@ function openlink(caller) {
 	location.assign(link);
 }
 
-window.onmouseover=function(e) {
+
+window.onmouseover = function (e) {
 	hovered = e;
 };
 
@@ -38,14 +39,6 @@ function getFavicons(sites, i) {
 		})
 		if (i <= 8) {
 			Promise.resolve(getFavicons(sites, i + 1))
-				.then(function () {
-					if (i < 8) {
-						return;
-					}
-					else {
-						//location.reload();
-					}
-				})
 		}
 	}
 }
@@ -57,17 +50,23 @@ document.addEventListener('DOMContentLoaded', function () {
 	var ginput = document.getElementById('ginput');
 	var results = document.getElementById('results');
 
+	document.getElementById("wrapper").addEventListener("mousedown", function () {
+		results.innerHTML = "";
+		document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
+	});
+
 	ginput.onkeydown = function (e) {
-		if (ginput.value === "") {
+		if (ginput.value.length <= 1) {
 			results.innerHTML = "";
+			document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
 		}
-		else if (e.key == "ArrowDown"){
+		else if (e.key == "ArrowDown") {
 			console.log(e.key)
 		}
-		else if(e.key == "ArrowUp"){
+		else if (e.key == "ArrowUp") {
 			console.log(e.key)
 		}
-		else if(e.key == "Enter"){
+		else if (e.key == "Enter") {
 			console.log(e.key)
 		}
 		else if (ginput.value != lastsearch
@@ -86,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function () {
 						</div>";
 						results.appendChild(e);
 						document.getElementById('result-' + i).addEventListener("click", function () {
-
 							if (this.textContent.substring(0, 8) == "https://" ||
 								this.textContent.substring(0, 7) == "http://") {
 								location.assign(this.textContent);
@@ -104,9 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
 						i += 1;
 					}
 				}())
-				console.log("Last search: " + lastsearch);
-			}
+			document.getElementsByClassName('grid-container')[0].style.visibility = "hidden";
+			console.log("Last search: " + lastsearch);
+		}
 	}
+
 
 	chrome.topSites.get(function (sites) {
 		i = 1;
@@ -117,7 +117,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			var div = document.getElementById("item" + i);
 			links[i] = sites[i - 1].url;
 			div.addEventListener("click", function () { openlink(this) });
-			div.querySelectorAll("img")[0].src = localStorage.getItem(i - 1);
+			if (localStorage.getItem(i - 1) != null) {
+				div.querySelectorAll("img")[0].src = localStorage.getItem(i - 1);
+			}
 			div.getElementsByClassName("tile-title")[0].innerHTML = sites[i - 1].title;
 			div.title = sites[i - 1].url;
 			var linkTag = document.createElement('link');
@@ -127,20 +129,5 @@ document.addEventListener('DOMContentLoaded', function () {
 			i += 1;
 		}
 	})
-
-
-	/**
-	//Chrome New Tab Style Overlapping
-	ginput.addEventListener("focus", function(){
-		document.getElementsByClassName('grid-container')[0].style.visibility = "hidden";
-		results.style.minHeight = "377px";
-
-	});
-	ginput.addEventListener("focusout", function(){
-		results.innerHTML = "";
-		document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
-		results.style.minHeight = "0px";
-	});
-	*/
 
 })
