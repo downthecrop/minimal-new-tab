@@ -6,14 +6,8 @@ var hovered = "";
 
 
 function openlink(caller) {
-	link = links[caller.id.charAt(caller.id.length - 1)]
-	location.assign(link);
+	location.assign(links[caller.id.charAt(caller.id.length - 1)])
 }
-
-
-window.onmouseover = function (e) {
-	hovered = e;
-};
 
 
 function toDataURL(url, callback) {
@@ -50,11 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	var ginput = document.getElementById('ginput');
 	var results = document.getElementById('results');
 
-	document.getElementById("wrapper").addEventListener("mousedown", function () {
-		results.innerHTML = "";
-		document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
-	});
-
 	ginput.onkeydown = function (e) {
 		if (ginput.value.length <= 1) {
 			results.innerHTML = "";
@@ -84,21 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
 						<span>" + data[1][i] + "</span>\
 						</div>";
 						results.appendChild(e);
-						document.getElementById('result-' + i).addEventListener("click", function () {
-							if (this.textContent.substring(0, 8) == "https://" ||
-								this.textContent.substring(0, 7) == "http://") {
-								location.assign(this.textContent);
-							}
-							else {
-								location.assign(search + this.textContent);
-							}
-
-							/** Add value to search
-							 * bar without searching
-							ginput.value=this.textContent
-							ginput.focus();
-							*/
-						});
 						i += 1;
 					}
 				}())
@@ -129,5 +103,27 @@ document.addEventListener('DOMContentLoaded', function () {
 			i += 1;
 		}
 	})
+
+	document.getElementById("wrapper").addEventListener("mousedown", function (e) {
+		if (e.target.parentElement.className === "result-item"){
+			location.assign(search + e.target.innerText);
+			if (e.target.innerText.substring(0, 8) == "https://" ||
+				e.target.innerText.substring(0, 7) == "http://") {
+				location.assign(e.target.innerText);
+			}
+			else {
+				location.assign(search + e.target.innerText);
+					/** Add value to search
+					 * bar without searching
+					 * ginput.value=this.textContent
+					 * ginput.focus();
+					*/
+			}
+		}
+		else{
+			document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
+			results.innerHTML = "";
+		}
+	});
 
 })
