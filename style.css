@@ -37,6 +37,23 @@
   color: white;
 }
 
+.result-item-last:hover{
+  background-color: #1a1a1a;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+.result-item-last span{
+  margin: 0; 
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 25px;
+  font-size: 16px;
+  display: block;
+  text-align:left;
+  color: white;
+}
+
 .grid-container > div {
   text-align: center;
   padding: 20px 0;
@@ -112,7 +129,7 @@ li a:hover {
 }
 .logo{
   margin-top:130px;
-  margin-bottom:20px;
+  margin-bottom:30px;
 }
 .bar{
   margin:0 auto;

@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				.then(data => function () {
 					var i = 0;
 					results.innerHTML = "";
-					while (i < data[1].length) {
+					while (i < data[1].length-1) {
 						var e = document.createElement('div');
 						e.innerHTML = "<div class='result-item' id='result-" + i + "'>\
 						<span>" + data[1][i] + "</span>\
@@ -75,6 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
 						results.appendChild(e);
 						i += 1;
 					}
+					//final element rounding css
+					var e = document.createElement('div');
+					e.innerHTML = "<div class='result-item-last' id='result-" + i + "'>\
+					<span>" + data[1][i] + "</span>\
+					</div>";
+					results.appendChild(e);
 				}())
 			document.getElementsByClassName('grid-container')[0].style.visibility = "hidden";
 			console.log("Last search: " + lastsearch);
@@ -105,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	})
 
 	document.getElementById("wrapper").addEventListener("mousedown", function (e) {
-		if (e.target.parentElement.className === "result-item"){
+		if (e.target.parentElement.className === "result-item" || e.target.parentElement.className === "result-item-last"){
 			location.assign(search + e.target.innerText);
 			if (e.target.innerText.substring(0, 8) == "https://" ||
 				e.target.innerText.substring(0, 7) == "http://") {
