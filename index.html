@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>New Tab</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
     <script src="script.js"></script>
 </head>
+
 <body>
     <div id="wrapper">
         <header>
@@ -20,7 +22,8 @@
         </div>
         <div id="searcharea" class="bar">
             <form autocomplete="off" action="http://www.google.com/search" method="get">
-                <input id="ginput" class="searchbar" type="text" title="Search" name="q" placeholder="Search Google or type URL" />
+                <input id="ginput" class="searchbar" type="text" title="Search" name="q"
+                    placeholder="Search Google or type URL" />
                 <a href="#"><img class="voice" src="mic.png" title="Search by Voice" /></a>
             </form>
             <div id="results"></div>
@@ -67,6 +70,20 @@
                 </div>
             </div>
         </div>
-    <div>
+        <div id="ext-menu">
+            <img src="cog.png" style="height:20px;width: 20px; opacity: 0.1;" id="settings-menu">
+        </div>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>Some text in the Modal..</p>
+                <button id="clear-storage">Clear Local Storage</button>
+            </div>
+
+        </div>
 </body>
+
 </html>
