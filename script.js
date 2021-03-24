@@ -75,6 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         e.innerHTML = "<div class='result-item' id='result-" + i + "'>\
 						<span>" + data[1][i] + "</span>\
 						</div>";
+                        e.addEventListener("mouseover", function(){
+                            setActive(this)
+                        })
+                        e.addEventListener("mouseout", function(){
+                            setInactive(this)
+                        })
                         results.appendChild(e);
                         i += 1;
                     }
@@ -88,6 +94,16 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementsByClassName('grid-container')[0].style.visibility = "hidden";
             console.log("Last search: " + lastsearch);
         }
+    }
+
+    function setActive(element){
+            console.log("hovered")
+            element.setAttribute("class","result-item-active")
+    }
+
+    function setInactive(element){
+        console.log("mouse out")
+        element.setAttribute("class","")
     }
 
 
@@ -114,25 +130,27 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     document.getElementById("wrapper").addEventListener("mousedown", function (e) {
-        if (e.target.parentElement.className === "result-item" || e.target.parentElement.className === "result-item-last") {
-            location.assign(search + e.target.innerText);
-            if (e.target.innerText.substring(0, 8) == "https://" ||
-                e.target.innerText.substring(0, 7) == "http://") {
-                location.assign(e.target.innerText);
+        if(e.button === 0){
+            if (e.target.parentElement.className === "result-item" || e.target.parentElement.className === "result-item-last") {
+                location.assign(search + e.target.innerText);
+                if (e.target.innerText.substring(0, 8) == "https://" ||
+                    e.target.innerText.substring(0, 7) == "http://") {
+                    location.assign(e.target.innerText);
+                }
+                else {
+                    location.assign(search + e.target.innerText);
+                    /** Add value to search
+                     * bar without searching
+                     * ginput.value=this.textContent
+                     * ginput.focus();
+                    */
+                }
             }
             else {
-                location.assign(search + e.target.innerText);
-                /** Add value to search
-                 * bar without searching
-                 * ginput.value=this.textContent
-                 * ginput.focus();
-                */
+                document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
+                results.innerHTML = "";
             }
-        }
-        else {
-            document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
-            results.innerHTML = "";
-        }
+    }
     });
 
     document.getElementById("clear-storage").addEventListener("click", function () {

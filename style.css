@@ -22,7 +22,7 @@
   text-align:left;
 }
 
-.result-item:hover{
+.result-item-active{
   background-color: #1a1a1a;
 }
 
