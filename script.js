@@ -2,8 +2,6 @@ const url = "http://suggestqueries.google.com/complete/search?client=chrome&q=";
 const iconurl = "https://www.google.com/s2/favicons?domain=";
 const search = "http://www.google.com/search?q=";
 var links = [];
-var hovered = "";
-
 
 function openlink(caller) {
     location.assign(links[caller.id.charAt(caller.id.length - 1)])
@@ -46,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var lastsearch = ""
     var ginput = document.getElementById('ginput');
     var results = document.getElementById('results');
+    let arrowsPressed = false
 
     ginput.onkeydown = function (e) {
         if (ginput.value.length <= 1) {
@@ -53,13 +52,36 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
         }
         else if (e.key == "ArrowDown") {
-            console.log(e.key)
+            arrowsPressed = true
+            let active = document.getElementsByClassName("result-item-active")[0]
+            if (active){
+                let activeId = document.getElementsByClassName("result-item-active")[0].children[0].id
+                let activeInt = parseInt(activeId[activeId.length - 1]);
+                setInactive(active)
+                setActive(document.getElementById("result-"+(activeInt+1)).parentElement)
+            }
+            else if(results.innerHTML != ""){
+                setActive(document.getElementById("result-0").parentElement)
+            }
         }
         else if (e.key == "ArrowUp") {
-            console.log(e.key)
+            arrowsPressed = true
+            let active = document.getElementsByClassName("result-item-active")[0]
+            if (active){
+                let activeId = document.getElementsByClassName("result-item-active")[0].children[0].id
+                let activeInt = parseInt(activeId[activeId.length - 1]);
+                setInactive(active)
+                setActive(document.getElementById("result-"+(activeInt-1)).parentElement)
+            }
         }
         else if (e.key == "Enter") {
-            console.log(e.key)
+            let active = document.getElementsByClassName("result-item-active")[0]
+            if (active && arrowsPressed){
+                submitSearch(active.innerText)
+            }
+            else if (ginput.value != ""){
+                submitSearch(ginput.value)
+            }
         }
         else if (ginput.value != lastsearch
             && ginput.value.substring(0, 8) != "https://"
@@ -75,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         e.innerHTML = "<div class='result-item' id='result-" + i + "'>\
 						<span>" + data[1][i] + "</span>\
 						</div>";
-                        e.addEventListener("mouseover", function(){
+                        e.addEventListener("mouseenter", function(){
                             setActive(this)
                         })
                         e.addEventListener("mouseout", function(){
@@ -139,11 +161,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 else {
                     location.assign(search + e.target.innerText);
-                    /** Add value to search
-                     * bar without searching
-                     * ginput.value=this.textContent
-                     * ginput.focus();
-                    */
                 }
             }
             else {
@@ -152,6 +169,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
     }
     });
+
+    function submitSearch(query) {
+            location.assign(search + query);
+    }
 
     document.getElementById("clear-storage").addEventListener("click", function () {
         localStorage.clear()
