@@ -44,18 +44,35 @@ document.addEventListener('DOMContentLoaded', function () {
     var lastsearch = ""
     var ginput = document.getElementById('ginput');
     var results = document.getElementById('results');
-    let arrowsPressed = false
+    let arrows = false
+
+
+    function setGUI(){
+        document.getElementById("enable-custom").addEventListener("click",function(){
+            console.log(document.getElementById("enable-custom").checked)
+        })
+        //document.getElementById("custom-entries").value = 
+        chrome.topSites.get(function (sites){
+            for (let i = 0; i < document.getElementsByClassName("menu-entry").length; i += 1){
+                console.log("edit-title-"+i)
+                document.getElementById("edit-title-"+i).value = sites[i].title
+                document.getElementById("edit-link-"+i).value = sites[i].url
+            }
+        })
+    }
+ 
+    setGUI()
 
     ginput.onkeydown = function (e) {
+        let active = document.getElementsByClassName("result-item-active")[0]
         if (ginput.value.length <= 1) {
             results.innerHTML = "";
             document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
         }
         else if (e.key == "ArrowDown") {
-            arrowsPressed = true
-            let active = document.getElementsByClassName("result-item-active")[0]
+            arrows = true
             if (active){
-                let activeId = document.getElementsByClassName("result-item-active")[0].children[0].id
+                let activeId = active.children[0].id
                 let activeInt = parseInt(activeId[activeId.length - 1]);
                 setInactive(active)
                 setActive(document.getElementById("result-"+(activeInt+1)).parentElement)
@@ -65,18 +82,16 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         else if (e.key == "ArrowUp") {
-            arrowsPressed = true
-            let active = document.getElementsByClassName("result-item-active")[0]
+            arrows = true
             if (active){
-                let activeId = document.getElementsByClassName("result-item-active")[0].children[0].id
+                let activeId = active.children[0].id
                 let activeInt = parseInt(activeId[activeId.length - 1]);
                 setInactive(active)
                 setActive(document.getElementById("result-"+(activeInt-1)).parentElement)
             }
         }
         else if (e.key == "Enter") {
-            let active = document.getElementsByClassName("result-item-active")[0]
-            if (active && arrowsPressed){
+            if (active && arrows){
                 submitSearch(active.innerText)
             }
             else if (ginput.value != ""){
@@ -118,14 +133,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function setActive(element){
-            console.log("hovered")
-            element.setAttribute("class","result-item-active")
+    function setActive(e){
+        e.setAttribute("class","result-item-active")
     }
 
-    function setInactive(element){
-        console.log("mouse out")
-        element.setAttribute("class","")
+    function setInactive(e){
+        e.setAttribute("class","")
     }
 
 
