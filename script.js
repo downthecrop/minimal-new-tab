@@ -1,17 +1,16 @@
 const url = "http://suggestqueries.google.com/complete/search?client=chrome&q=";
 const iconurl = "https://www.google.com/s2/favicons?domain=";
 const search = "http://www.google.com/search?q=";
-var links = [];
+const defaultFavicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABs0lEQVR4AWL4//8/RRjO8Iucx+noO0O2qmlbUEnt5r3Juas+hsQD6KaG7dqCKPgx72Pe9GIY27btZBrbtm3btm0nO12D7tVXe63jqtqqU/iDw9K58sEruKkngH0DBljOE+T/qqx/Ln718RZOFasxyd3XRbWzlFMxRbgOTx9QWFzHtZlD+aqLb108sOAIAai6+NbHW7lUHaZkDFJt+wp1DG7R1d0b7Z88EOL08oXwjokcOvvUxYMjBFCamWP5KjKBjKOpZx2HEPj+Ieod26U+dpg6lK2CIwTQH0oECGT5eHj+IgSueJ5fPaPg6PZrz6DGHiGAISE7QPrIvIKVrSvCe2DNHSsehIDatOBna/+OEOgTQE6WAy1AAFiVcf6PhgCGxEvlA9QngLlAQCkLsNWhBZIDz/zg4ggmjHfYxoPGEMPZECW+zjwmFk6Ih194y7VHYGOPvEYlTAJlQwI4MEhgTOzZGiNalRpGgsOYFw5lEfTKybgfBtmuTNdI3MrOTAQmYf/DNcAwDeycVjROgZFt18gMso6V5Z8JpcEk2LPKpOAH0/4bKMCAYnuqm7cHOGHJTBRhAEJN9d/t5zCxAAAAAElFTkSuQmCC"
 
 function openlink(caller) {
-    location.assign(links[caller.id.charAt(caller.id.length - 1)])
+    location.assign(caller.getAttribute("url"))
 }
 
-
 function toDataURL(url, callback) {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.onload = function () {
-        var reader = new FileReader();
+        let reader = new FileReader();
         reader.onloadend = function () {
             callback(reader.result);
         }
@@ -22,38 +21,58 @@ function toDataURL(url, callback) {
     xhr.send();
 }
 
-googleDefault = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABs0lEQVR4AWL4//8/RRjO8Iucx+noO0O2qmlbUEnt5r3Juas+hsQD6KaG7dqCKPgx72Pe9GIY27btZBrbtm3btm0nO12D7tVXe63jqtqqU/iDw9K58sEruKkngH0DBljOE+T/qqx/Ln718RZOFasxyd3XRbWzlFMxRbgOTx9QWFzHtZlD+aqLb108sOAIAai6+NbHW7lUHaZkDFJt+wp1DG7R1d0b7Z88EOL08oXwjokcOvvUxYMjBFCamWP5KjKBjKOpZx2HEPj+Ieod26U+dpg6lK2CIwTQH0oECGT5eHj+IgSueJ5fPaPg6PZrz6DGHiGAISE7QPrIvIKVrSvCe2DNHSsehIDatOBna/+OEOgTQE6WAy1AAFiVcf6PhgCGxEvlA9QngLlAQCkLsNWhBZIDz/zg4ggmjHfYxoPGEMPZECW+zjwmFk6Ih194y7VHYGOPvEYlTAJlQwI4MEhgTOzZGiNalRpGgsOYFw5lEfTKybgfBtmuTNdI3MrOTAQmYf/DNcAwDeycVjROgZFt18gMso6V5Z8JpcEk2LPKpOAH0/4bKMCAYnuqm7cHOGHJTBRhAEJN9d/t5zCxAAAAAElFTkSuQmCC"
-
-function getFavicons(sites, i) {
+function configureTiles(sites, i) {
     let data = JSON.parse(localStorage.getItem("site-" + i))
-    if (data == null || data.url != sites[i].url) {
-        setSiteData(sites[i], i)
-    }
     if (i < 8) {
-        Promise.resolve(getFavicons(sites, i + 1))
+        if (data == null || data.url != sites[i].url) {
+            setLocalStorage(sites[i], i)
+        }
+        else {
+            displaySiteData(i)
+        }
+        Promise.resolve(configureTiles(sites, i + 1))
     }
 }
 
-function setSiteData(site, i) {
+function displaySiteData(i) {
+    let data = JSON.parse(localStorage.getItem("site-" + i))
+    let div = document.getElementById("item" + i);
+    let link = document.createElement('link');
+    
+    div.setAttribute("url", data.url)
+    div.getElementsByClassName("tile-title")[0].innerHTML = data.title;
+    div.addEventListener("click", function () { openlink(this) });
+    div.title = data.url;
+
+    if (data.favicon != "")
+        div.querySelectorAll("img")[0].src = data.favicon;
+
+    link.rel = "dns-prefetch preconnect prerender";
+    link.href = data.url;
+    document.head.appendChild(link);
+}
+
+function setLocalStorage(site, i) {
     toDataURL(iconurl + site.url, function (dataUrl) {
-        icon = (dataUrl != googleDefault) ? dataUrl : "";
+        let icon = (dataUrl != defaultFavicon) ? dataUrl : "";
         let j = {
             "title": site.title,
             "url": site.url,
             "favicon": icon
         }
         localStorage.setItem("site-" + i, JSON.stringify(j))
+        displaySiteData(i)
     })
 }
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    var lastsearch = ""
-    var ginput = document.getElementById('ginput');
-    var results = document.getElementById('results');
+    let lastsearch = ""
+    let ginput = document.getElementById('ginput');
+    let results = document.getElementById('results');
     let arrows = false
 
-    function setGUI() {
+    function settingsGUI() {
         document.getElementById("enable-custom").checked = JSON.parse(localStorage.getItem("enable-custom"));
         document.getElementById("enable-custom").addEventListener("click", function () {
             localStorage.setItem("enable-custom", document.getElementById("enable-custom").checked);
@@ -68,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    setGUI()
+    settingsGUI()
 
     ginput.onkeydown = function (e) {
         let active = document.getElementsByClassName("result-item-active")[0]
@@ -150,28 +169,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     chrome.topSites.get(function (sites) {
-        i = 0;
 
-        getFavicons(sites, i)
-
-        while (i < 8) {
-            let jData = JSON.parse(localStorage.getItem("site-" + i))
-            console.log(jData)
-            var div = document.getElementById("item" + parseInt(i + 1));
-            console.log(jData.url)
-            links[i + 1] = jData.url;
-            div.addEventListener("click", function () { openlink(this) });
-            if (jData.favicon != "") {
-                div.querySelectorAll("img")[0].src = jData.favicon;
-            }
-            div.getElementsByClassName("tile-title")[0].innerHTML = jData.title;
-            div.title = jData.url;
-            var linkTag = document.createElement('link');
-            linkTag.rel = "dns-prefetch preconnect prerender";
-            linkTag.href = jData.url;
-            document.head.appendChild(linkTag);
-            i += 1;
-        }
+        configureTiles(sites, 0)
 
         if (JSON.parse(localStorage.getItem("enable-custom"))) {
             //something
@@ -181,14 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById("wrapper").addEventListener("mousedown", function (e) {
         if (e.button === 0) {
             if (e.target.parentElement.className === "result-item" || e.target.parentElement.className === "result-item-last") {
-                location.assign(search + e.target.innerText);
-                if (e.target.innerText.substring(0, 8) == "https://" ||
-                    e.target.innerText.substring(0, 7) == "http://") {
-                    location.assign(e.target.innerText);
-                }
-                else {
-                    location.assign(search + e.target.innerText);
-                }
+                submitSearch(e.target.innerText)
             }
             else {
                 document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
@@ -198,7 +190,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function submitSearch(query) {
-        location.assign(search + query);
+        if (query.substring(0, 8) == "https://" || query.substring(0, 7) == "http://") {
+            location.assign(query);
+        }
+        else{
+            location.assign(search + query);
+        }       
     }
 
     document.getElementById("clear-storage").addEventListener("click", function () {
