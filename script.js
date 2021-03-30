@@ -21,16 +21,17 @@ function toDataURL(url, callback) {
     xhr.send();
 }
 
-function configureTile(sites, i) {
-    let data = JSON.parse(localStorage.getItem("site-" + i))
-    if (i < 8) {
+function configureTile(sites) {
+    let i = 0
+    while (i < 8) {
+        let data = JSON.parse(localStorage.getItem("site-" + i))
         if (data == null || data.url != sites[i].url) {
             setLocalStorage(sites[i], i)
         }
         else {
             displaySiteData(i)
         }
-        Promise.resolve(configureTile(sites, i + 1))
+        i += 1
     }
 }
 
@@ -199,19 +200,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    chrome.topSites.get(function (sites) {
-
-        configureTile(sites, 0)
-
-        if (JSON.parse(localStorage.getItem("enable-custom"))) {
-            //something
-        }
-    })
-
     //Mouse events for results
     document.getElementById("wrapper").addEventListener("mousedown", function (e) {
         if (e.button === 0) {
-            if (e.target.parentElement.className === "result-item" || e.target.parentElement.className === "result-item-last") {
+            if (e.target.parentElement.className.includes("result-item")) {
                 submitSearch(e.target.innerText)
             }
             else {
@@ -220,5 +212,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     })
-    settingsGUI()
+
+    chrome.topSites.get(function (sites) {
+        configureTile(sites)
+    })
+
+    function initSettings() {
+        if (JSON.parse(localStorage.getItem("site-" + 7))) {
+            settingsGUI()
+        }
+    }
+    setTimeout(initSettings, 100);
 })
