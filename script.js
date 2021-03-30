@@ -21,7 +21,7 @@ function toDataURL(url, callback) {
     xhr.send();
 }
 
-function configureTiles(sites, i) {
+function configureTile(sites, i) {
     let data = JSON.parse(localStorage.getItem("site-" + i))
     if (i < 8) {
         if (data == null || data.url != sites[i].url) {
@@ -30,7 +30,7 @@ function configureTiles(sites, i) {
         else {
             displaySiteData(i)
         }
-        Promise.resolve(configureTiles(sites, i + 1))
+        Promise.resolve(configureTile(sites, i + 1))
     }
 }
 
@@ -38,7 +38,7 @@ function displaySiteData(i) {
     let data = JSON.parse(localStorage.getItem("site-" + i))
     let div = document.getElementById("item" + i);
     let link = document.createElement('link');
-    
+
     div.setAttribute("url", data.url)
     div.getElementsByClassName("tile-title")[0].innerHTML = data.title;
     div.addEventListener("click", function () { openlink(this) });
@@ -47,7 +47,7 @@ function displaySiteData(i) {
     if (data.favicon != "")
         div.querySelectorAll("img")[0].src = data.favicon;
 
-    link.rel = "dns-prefetch preconnect prerender";
+    link.rel = "prerender";
     link.href = data.url;
     document.head.appendChild(link);
 }
@@ -65,6 +65,62 @@ function setLocalStorage(site, i) {
     })
 }
 
+function setActive(e) {
+    e.setAttribute("class", "result-item-active")
+}
+
+function setInactive(e) {
+    e.setAttribute("class", "")
+}
+
+function settingsGUI() {
+    //settings modal
+    let modal = document.getElementById("myModal");
+    let btn = document.getElementById("settings-menu");
+    let span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    //Custom URLs and Titles
+    document.getElementById("enable-custom").checked = JSON.parse(localStorage.getItem("enable-custom"));
+    document.getElementById("enable-custom").addEventListener("click", function () {
+        localStorage.setItem("enable-custom", document.getElementById("enable-custom").checked);
+    })
+
+    document.getElementById("clear-storage").addEventListener("click", function () {
+        localStorage.clear()
+        window.location.reload()
+    });
+
+    for (let i = 0; i < 8; i += 1) {
+        let j = JSON.parse(localStorage.getItem("site-"+i))
+        document.getElementById("edit-title-" + i).value = j.title
+        document.getElementById("edit-link-" + i).value = j.url
+    }
+}
+
+function submitSearch(query) {
+    if (query.substring(0, 8) == "https://" || query.substring(0, 7) == "http://") {
+        location.assign(query);
+    }
+    else {
+        location.assign(search + query);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
     let lastsearch = ""
@@ -72,23 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let results = document.getElementById('results');
     let arrows = false
 
-    function settingsGUI() {
-        document.getElementById("enable-custom").checked = JSON.parse(localStorage.getItem("enable-custom"));
-        document.getElementById("enable-custom").addEventListener("click", function () {
-            localStorage.setItem("enable-custom", document.getElementById("enable-custom").checked);
-        })
-        chrome.topSites.get(function (sites) {
-            for (let i = 0; i < document.getElementsByClassName("menu-entry").length; i += 1) {
-                console.log("edit-title-" + i)
-                document.getElementById("edit-title-" + i).value = sites[i].title
-                document.getElementById("edit-link-" + i).value = sites[i].url
-            }
-        })
-
-    }
-
-    settingsGUI()
-
+    //Keyboard Events for Suggestions
     ginput.onkeydown = function (e) {
         let active = document.getElementsByClassName("result-item-active")[0]
         if (ginput.value.length <= 1) {
@@ -159,24 +199,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function setActive(e) {
-        e.setAttribute("class", "result-item-active")
-    }
-
-    function setInactive(e) {
-        e.setAttribute("class", "")
-    }
-
-
     chrome.topSites.get(function (sites) {
 
-        configureTiles(sites, 0)
+        configureTile(sites, 0)
 
         if (JSON.parse(localStorage.getItem("enable-custom"))) {
             //something
         }
     })
 
+    //Mouse events for results
     document.getElementById("wrapper").addEventListener("mousedown", function (e) {
         if (e.button === 0) {
             if (e.target.parentElement.className === "result-item" || e.target.parentElement.className === "result-item-last") {
@@ -187,40 +219,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 results.innerHTML = "";
             }
         }
-    });
-
-    function submitSearch(query) {
-        if (query.substring(0, 8) == "https://" || query.substring(0, 7) == "http://") {
-            location.assign(query);
-        }
-        else{
-            location.assign(search + query);
-        }       
-    }
-
-    document.getElementById("clear-storage").addEventListener("click", function () {
-        localStorage.clear()
-        window.location.reload()
-    });
-
-    //settings modal
-    var modal = document.getElementById("myModal");
-    var btn = document.getElementById("settings-menu");
-    var span = document.getElementsByClassName("close")[0];
-
-    btn.onclick = function () {
-        modal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        modal.style.display = "none";
-    }
-
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-
+    })
+    settingsGUI()
 })
