@@ -7,23 +7,16 @@ function openlink(caller) {
     location.assign(caller.getAttribute("url"))
 }
 
-function toDataURL(url, callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-        let reader = new FileReader();
-        reader.onloadend = function () {
-            callback(reader.result);
-        }
-        reader.readAsDataURL(xhr.response);
-    };
-    xhr.open('GET', url);
-    xhr.responseType = 'blob';
-    xhr.send();
+async function getFavicon(url, callback) {
+    let f = new FileReader()
+    f.readAsDataURL(await fetch(url).then(r => r.blob()))
+    f.onloadend = function(){      
+        callback(f.result)
+    }
 }
 
-function configureTile(sites) {
-    let i = 0
-    while (i < 8) {
+function configureTiles(sites) { 
+    for (let i = 0; i < 8; i += 1) {
         let data = JSON.parse(localStorage.getItem("site-" + i))
         if (data == null || data.url != sites[i].url) {
             setLocalStorage(sites[i], i)
@@ -31,7 +24,6 @@ function configureTile(sites) {
         else {
             displaySiteData(i)
         }
-        i += 1
     }
 }
 
@@ -54,7 +46,7 @@ function displaySiteData(i) {
 }
 
 function setLocalStorage(site, i) {
-    toDataURL(iconurl + site.url, function (dataUrl) {
+    getFavicon(iconurl + site.url, function (dataUrl) {
         let icon = (dataUrl != defaultFavicon) ? dataUrl : "";
         let j = {
             "title": site.title,
@@ -214,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     chrome.topSites.get(function (sites) {
-        configureTile(sites)
+        configureTiles(sites)
     })
 
     function initSettings() {
