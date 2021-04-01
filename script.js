@@ -10,15 +10,13 @@ function openlink(caller) {
 async function getFavicon(url, callback) {
     let f = new FileReader()
     f.readAsDataURL(await fetch(url).then(r => r.blob()))
-    f.onloadend = function(){      
-        callback(f.result)
-    }
+    f.onloadend = function () { callback(f.result) }
 }
 
-function configureTiles(sites) { 
+function configureTiles(sites) {
     for (let i = 0; i < 8; i += 1) {
         let data = JSON.parse(localStorage.getItem("site-" + i))
-        if (data == null || data.url != sites[i].url) {
+        if ((data == null || data.url != sites[i].url) && !JSON.parse(localStorage.getItem("enable-custom"))) {
             setLocalStorage(sites[i], i)
         }
         else {
@@ -66,43 +64,55 @@ function setInactive(e) {
     e.setAttribute("class", "")
 }
 
-function settingsGUI() {
-    //settings modal
-    let modal = document.getElementById("myModal");
-    let btn = document.getElementById("settings-menu");
-    let span = document.getElementsByClassName("close")[0];
+function updateStorage(i) {
+    let title = document.getElementById("edit-title-" + i)
+    let url = document.getElementById("edit-link-" + i)
+    let site = JSON.parse(localStorage.getItem("site-" + i))
+    site.title = title.value
+    site.url = url.value
+    setLocalStorage(site, i)
+}
 
-    btn.onclick = function () {
+function settingsGUI() {
+    //Modal
+    let modal = document.getElementById("myModal")
+    let openbtn = document.getElementById("settings-menu")
+    let closebtn = document.getElementsByClassName("close")[0]
+
+    openbtn.onclick = function () {
         modal.style.display = "block";
     }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
+    closebtn.onclick = function () {
         modal.style.display = "none";
     }
-
     window.onclick = function (event) {
-        if (event.target == modal) {
+        if (event.target == modal)
             modal.style.display = "none";
-        }
+    }
+
+    //Title & URL GUI
+    for (let i = 0; i < 8; i += 1) {
+        let j = JSON.parse(localStorage.getItem("site-" + i))
+        let title = document.getElementById("edit-title-" + i)
+        let url = document.getElementById("edit-link-" + i)
+
+        title.value = j.title
+        url.value = j.url
+
+        title.addEventListener('input', function () { updateStorage(i) })
+        url.addEventListener('input', function () { updateStorage(i) })
     }
 
     //Custom URLs and Titles
     document.getElementById("enable-custom").checked = JSON.parse(localStorage.getItem("enable-custom"));
-    document.getElementById("enable-custom").addEventListener("click", function () {
+    document.getElementById("enable-custom").onclick = function () {
         localStorage.setItem("enable-custom", document.getElementById("enable-custom").checked);
-    })
+    }
 
-    document.getElementById("clear-storage").addEventListener("click", function () {
+    document.getElementById("clear-storage").onclick = function () {
         localStorage.clear()
         window.location.reload()
-    });
-
-    for (let i = 0; i < 8; i += 1) {
-        let j = JSON.parse(localStorage.getItem("site-"+i))
-        document.getElementById("edit-title-" + i).value = j.title
-        document.getElementById("edit-link-" + i).value = j.url
-    }
+    };
 }
 
 function submitSearch(query) {
@@ -117,8 +127,8 @@ function submitSearch(query) {
 document.addEventListener('DOMContentLoaded', function () {
 
     let lastsearch = ""
-    let ginput = document.getElementById('ginput');
-    let results = document.getElementById('results');
+    let ginput = document.getElementById('ginput')
+    let results = document.getElementById('results')
     let arrows = false
 
     //Keyboard Events for Suggestions
