@@ -78,7 +78,7 @@ cursor: pointer;
   color: white;
 }
 
-.result-item-last:hover{
+.result-item-active-last {
   background-color: #1a1a1a;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;

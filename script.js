@@ -3,10 +3,6 @@ const iconurl = "https://www.google.com/s2/favicons?domain=";
 const search = "http://www.google.com/search?q=";
 const defaultFavicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABs0lEQVR4AWL4//8/RRjO8Iucx+noO0O2qmlbUEnt5r3Juas+hsQD6KaG7dqCKPgx72Pe9GIY27btZBrbtm3btm0nO12D7tVXe63jqtqqU/iDw9K58sEruKkngH0DBljOE+T/qqx/Ln718RZOFasxyd3XRbWzlFMxRbgOTx9QWFzHtZlD+aqLb108sOAIAai6+NbHW7lUHaZkDFJt+wp1DG7R1d0b7Z88EOL08oXwjokcOvvUxYMjBFCamWP5KjKBjKOpZx2HEPj+Ieod26U+dpg6lK2CIwTQH0oECGT5eHj+IgSueJ5fPaPg6PZrz6DGHiGAISE7QPrIvIKVrSvCe2DNHSsehIDatOBna/+OEOgTQE6WAy1AAFiVcf6PhgCGxEvlA9QngLlAQCkLsNWhBZIDz/zg4ggmjHfYxoPGEMPZECW+zjwmFk6Ih194y7VHYGOPvEYlTAJlQwI4MEhgTOzZGiNalRpGgsOYFw5lEfTKybgfBtmuTNdI3MrOTAQmYf/DNcAwDeycVjROgZFt18gMso6V5Z8JpcEk2LPKpOAH0/4bKMCAYnuqm7cHOGHJTBRhAEJN9d/t5zCxAAAAAElFTkSuQmCC"
 
-function openlink(caller) {
-    location.assign(caller.getAttribute("url"))
-}
-
 async function getFavicon(url, callback) {
     let f = new FileReader()
     f.readAsDataURL(await fetch(url).then(r => r.blob()))
@@ -28,11 +24,11 @@ function configureTiles(sites) {
 function displaySiteData(i) {
     let data = JSON.parse(localStorage.getItem("site-" + i))
     let div = document.getElementById("item" + i);
-    let link = document.createElement('link');
+    let link = document.createElement("link");
 
     div.setAttribute("url", data.url)
     div.getElementsByClassName("tile-title")[0].innerHTML = data.title;
-    div.addEventListener("click", function () { openlink(this) });
+    div.addEventListener("click", function () { location.assign(this.getAttribute("url")) });
     div.title = data.url;
 
     if (data.favicon != "")
@@ -57,7 +53,9 @@ function setLocalStorage(site, i) {
 }
 
 function setActive(e) {
-    e.setAttribute("class", "result-item-active")
+    let name = "result-item-active"
+    let r_class = (e.children[0].className.includes("last")) ? name + "-last" : name;
+    e.setAttribute("class", r_class)
 }
 
 function setInactive(e) {
@@ -112,7 +110,7 @@ function settingsGUI() {
     document.getElementById("clear-storage").onclick = function () {
         localStorage.clear()
         window.location.reload()
-    };
+    }
 }
 
 function submitSearch(query) {
@@ -125,7 +123,6 @@ function submitSearch(query) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-
     let lastsearch = ""
     let ginput = document.getElementById('ginput')
     let results = document.getElementById('results')
@@ -134,6 +131,10 @@ document.addEventListener('DOMContentLoaded', function () {
     //Keyboard Events for Suggestions
     ginput.onkeydown = function (e) {
         let active = document.getElementsByClassName("result-item-active")[0]
+        if (!active) {
+            active = document.getElementsByClassName("result-item-active-last")[0]
+        }
+
         if (ginput.value.length <= 1) {
             results.innerHTML = "";
             document.getElementsByClassName('grid-container')[0].style.visibility = "visible";
@@ -174,11 +175,11 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch(url + ginput.value)
                 .then(res => res.json())
                 .then(data => function () {
-                    var i = 0;
                     results.innerHTML = "";
-                    while (i < data[1].length - 1) {
+                    for (let i = 0; i < data[1].length; i += 1) {
                         var e = document.createElement('div');
-                        e.innerHTML = "<div class='result-item' id='result-" + i + "'>\
+                        let r_class = (i != data[1].length - 1) ? "result-item" : "result-item-last";
+                        e.innerHTML = `<div class='${r_class}' id='result-` + i + "'>\
 						<span>" + data[1][i] + "</span>\
 						</div>";
                         e.addEventListener("mouseenter", function () {
@@ -188,14 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             setInactive(this)
                         })
                         results.appendChild(e);
-                        i += 1;
                     }
-                    //final element rounding css
-                    var e = document.createElement('div');
-                    e.innerHTML = "<div class='result-item-last' id='result-" + i + "'>\
-					<span>" + data[1][i] + "</span>\
-					</div>";
-                    results.appendChild(e);
                 }())
             document.getElementsByClassName('grid-container')[0].style.visibility = "hidden";
             console.log("Last search: " + lastsearch);
