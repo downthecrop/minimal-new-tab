@@ -17,8 +17,7 @@ function configureTiles(sites) {
         let data = jLocal("site-" + i)
         if ((!data || data.url != sites[i].url) && !jLocal("enable-custom")) {
             setLocalStorage(sites[i], i)
-        }
-        else {
+        } else {
             displaySiteData(i)
         }
     }
@@ -79,7 +78,6 @@ function updateStorage(i) {
 }
 
 function settingsGUI() {
-    //Modal
     let modal = byId("myModal")
     let openbtn = byId("settings-menu")
     let closebtn = byClass("close")
@@ -117,10 +115,9 @@ function settingsGUI() {
 }
 
 function submitSearch(query) {
-    if (query.substring(0, 8).includes("https://") || query.substring(0, 7).includes("http://")) {
+    if (/^(http|https)/.test(query)) {
         location.assign(query);
-    }
-    else {
+    } else {
         location.assign(search + query);
     }
 }
@@ -132,48 +129,41 @@ function clearResults() {
 document.addEventListener("DOMContentLoaded", function () {
     let lastsearch = ""
     let arrows = false
-
-    let arrowNav = function(active,move){
-        if (!active)
-            setActive(document.getElementById("result-0").parentElement);
-        if (active){
-            arrows = true
-            let id = active.children[0].id
-            let i = parseInt(id[id.length - 1]);
-            setInactive(active)
-            setActive(byId("result-" + (i + move)).parentElement)
+    let arrowNav = function (move) {
+        let active = (byClass("result-item-active")) ? byClass("result-item-active") : byClass("result-item-active-last")
+        if (!active) {
+            //Default to result-0 if nothing is active
+            setActive(byId("result-0").parentElement)
+            active = byClass("result-item-active")
+            move = 0
         }
-    } 
+        arrows = true
+        let id = active.children[0].id
+        let i = parseInt(id[id.length - 1]);
+        setInactive(active)
+        setActive(byId("result-" + (i + move)).parentElement)
+    }
 
     //Keyboard Events for Suggestions
     byId("ginput").onkeydown = function (e) {
         let ginput = byId("ginput").value
-        let active = byClass("result-item-active")
-        if (!active)
-            active = byClass("result-item-active-last")
-
         if (ginput.length < 2) {
             clearResults();
             arrows = false
             byClass("grid-container").style.visibility = "visible";
-        }
-        else if (e.key === "ArrowDown") {
-            arrowNav(active,1)
-        }
-        else if (e.key === "ArrowUp") {
-            arrowNav(active,-1)
-        }
-        else if (e.key === "Enter") {
+        } else if (e.key === "ArrowDown") {
+            arrowNav(1)
+        } else if (e.key === "ArrowUp") {
+            arrowNav(-1)
+        } else if (e.key === "Enter") {
+            let active = (byClass("result-item-active")) ? byClass("result-item-active") : byClass("result-item-active-last")
             if (active && arrows) {
                 submitSearch(active.innerText)
-            }
-            else if (ginput) {
+            } else if (ginput) {
                 submitSearch(ginput)
             }
-        }
-        else if (lastsearch != ginput
-            && !ginput.substring(0, 8).includes("https://")
-            && !ginput.substring(0, 7).includes("http://")) {
+        } else if (lastsearch != ginput
+            && !/^(http|https)/.test(ginput)) {
             lastsearch = ginput
             fetch(url + ginput)
                 .then(r => r.json())
@@ -198,13 +188,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    //Mouse events for results
     byId("wrapper").addEventListener("mousedown", function (e) {
         if (e.button === 0) {
             if (e.target.parentElement.className.includes("result-item")) {
                 submitSearch(e.target.innerText)
-            }
-            else {
+            } else {
                 byClass("grid-container").style.visibility = "visible";
                 clearResults();
             }
