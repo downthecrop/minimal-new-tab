@@ -1,10 +1,11 @@
 const url = "http://suggestqueries.google.com/complete/search?client=chrome&q=";
 const iconurl = "https://www.google.com/s2/favicons?domain=";
 const search = "http://www.google.com/search?q=";
-const dFavicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABs0lEQVR4AWL4//8/RRjO8Iucx+noO0O2qmlbUEnt5r3Juas+hsQD6KaG7dqCKPgx72Pe9GIY27btZBrbtm3btm0nO12D7tVXe63jqtqqU/iDw9K58sEruKkngH0DBljOE+T/qqx/Ln718RZOFasxyd3XRbWzlFMxRbgOTx9QWFzHtZlD+aqLb108sOAIAai6+NbHW7lUHaZkDFJt+wp1DG7R1d0b7Z88EOL08oXwjokcOvvUxYMjBFCamWP5KjKBjKOpZx2HEPj+Ieod26U+dpg6lK2CIwTQH0oECGT5eHj+IgSueJ5fPaPg6PZrz6DGHiGAISE7QPrIvIKVrSvCe2DNHSsehIDatOBna/+OEOgTQE6WAy1AAFiVcf6PhgCGxEvlA9QngLlAQCkLsNWhBZIDz/zg4ggmjHfYxoPGEMPZECW+zjwmFk6Ih194y7VHYGOPvEYlTAJlQwI4MEhgTOzZGiNalRpGgsOYFw5lEfTKybgfBtmuTNdI3MrOTAQmYf/DNcAwDeycVjROgZFt18gMso6V5Z8JpcEk2LPKpOAH0/4bKMCAYnuqm7cHOGHJTBRhAEJN9d/t5zCxAAAAAElFTkSuQmCC"
+const dFavicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8"
 
 let byId = function (i) { return document.getElementById(i); };
 let byClass = function (c) { return document.getElementsByClassName(c)[0]; };
+let arrows = false
 
 async function getFavicon(url, callback) {
     let f = new FileReader()
@@ -43,7 +44,7 @@ function displaySiteData(i) {
 
 function setLocalStorage(site, i) {
     getFavicon(iconurl + site.url, function (dataUrl) {
-        let icon = (dataUrl != dFavicon) ? dataUrl : "";
+        let icon = (!dataUrl.includes(dFavicon)) ? dataUrl : "";
         let j = {
             "title": site.title,
             "url": site.url,
@@ -122,27 +123,27 @@ function submitSearch(query) {
     }
 }
 
+function arrowNav (move) {
+    let active = (byClass("result-item-active")) ? byClass("result-item-active") : byClass("result-item-active-last")
+    if (!active) {
+        //Default to result-0 if nothing is active
+        setActive(byId("result-0").parentElement)
+        active = byClass("result-item-active")
+        move = 0
+    }
+    let id = active.children[0].id
+    let i = parseInt(id[id.length - 1]);
+    arrows = true
+    setInactive(active)
+    setActive(byId("result-" + (i + move)).parentElement)
+}
+
 function clearResults() {
     byId("results").innerHTML = ""
 }
 
 document.addEventListener("DOMContentLoaded", function () {
     let lastsearch = ""
-    let arrows = false
-    let arrowNav = function (move) {
-        let active = (byClass("result-item-active")) ? byClass("result-item-active") : byClass("result-item-active-last")
-        if (!active) {
-            //Default to result-0 if nothing is active
-            setActive(byId("result-0").parentElement)
-            active = byClass("result-item-active")
-            move = 0
-        }
-        arrows = true
-        let id = active.children[0].id
-        let i = parseInt(id[id.length - 1]);
-        setInactive(active)
-        setActive(byId("result-" + (i + move)).parentElement)
-    }
 
     //Keyboard Events for Suggestions
     byId("ginput").onkeydown = function (e) {
@@ -167,20 +168,20 @@ document.addEventListener("DOMContentLoaded", function () {
             lastsearch = ginput
             fetch(url + ginput)
                 .then(r => r.json())
-                .then(data => function () {
+                .then(j => function () {
                     clearResults();
-                    for (let i = 0; i < data[1].length; i += 1) {
-                        let d = document.createElement("div");
-                        let d2 = document.createElement("div");
-                        let t = document.createElement("span");
-                        d2.className = (i != data[1].length - 1) ? "result-item" : "result-item-last";
-                        t.innerText = data[1][i]
-                        d2.id = "result-" + i
-                        d2.appendChild(t)
-                        d.appendChild(d2)
-                        d.addEventListener("mouseenter", function () { setActive(this) })
-                        d.addEventListener("mouseout", function () { setInactive(this) })
-                        byId("results").appendChild(d);
+                    for (let i = 0; i < j[1].length; i += 1) {
+                        let a = document.createElement("div")
+                        let b = document.createElement("div")
+                        let c = document.createElement("span")
+                        c.innerText = j[1][i]
+                        b.id = "result-" + i
+                        b.className = (i != j[1].length - 1) ? "result-item" : "result-item-last"
+                        b.appendChild(c)
+                        a.appendChild(b)
+                        a.addEventListener("mouseenter", function () { setActive(this) })
+                        a.addEventListener("mouseout", function () { setInactive(this) })
+                        byId("results").appendChild(a)
                     }
                 }())
             byClass("grid-container").style.visibility = "hidden";
@@ -202,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.topSites.get(function (sites) {
         configureTiles(sites)
     })
-
+ 
     function initSettings() {
         if (jLocal("site-" + 7)) {
             settingsGUI()
