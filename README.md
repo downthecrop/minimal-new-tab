@@ -14,7 +14,7 @@ This is an all in one drop in replacement for the Chrome new tab.
 - No "Helpful tips"
 - True Dark Theme 
 - Chrome Top Sites
-- Custom Tip Sites
+- Custom Top Sites
 - Search Bar with Suggestions
 - No configuration required
 - Fast!
