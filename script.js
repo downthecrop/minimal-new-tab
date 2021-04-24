@@ -6,9 +6,14 @@ const dFavicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf
 let arrows = false
 
 async function getFavicon(url, callback) {
-    let f = new FileReader()
-    f.readAsDataURL(await fetch(url).then(r => r.blob()))
-    f.onloadend = function () { callback(f.result) }
+    if (url) {
+        let f = new FileReader()
+        f.readAsDataURL(await fetch(iconurl + url).then(r => r.blob()))
+        f.onloadend = function () { callback(f.result) }
+    }
+    else {
+        callback("")
+    }
 }
 
 function byId(i) { return document.getElementById(i); };
@@ -19,7 +24,7 @@ function configureTiles(sites) {
         let data = jLocal("site-" + i)
         if ((!data || data.url != sites[i].url) && !jLocal("enable-custom")) {
             setLocalStorage(sites[i], i)
-        } else {
+        } else if (data.url) {
             displaySiteData(i)
         }
     }
@@ -30,6 +35,7 @@ function displaySiteData(i) {
     let div = byId("item" + i);
     let link = document.createElement("link");
 
+    div.style.visibility = "visible"
     div.setAttribute("url", data.url)
     div.getElementsByClassName("tile-title")[0].innerHTML = data.title;
     div.addEventListener("click", function () { location.assign(this.getAttribute("url")) });
@@ -44,7 +50,7 @@ function displaySiteData(i) {
 }
 
 function setLocalStorage(site, i) {
-    getFavicon(iconurl + site.url, function (dataUrl) {
+    getFavicon(site.url, function (dataUrl) {
         let icon = (!dataUrl.includes(dFavicon)) ? dataUrl : "";
         let j = {
             "title": site.title,
@@ -113,10 +119,11 @@ function settingsGUI() {
     byId("show-topbar").checked = jLocal("show-topbar");
     byId("show-topbar").onclick = function () {
         localStorage.setItem("show-topbar", byId("show-topbar").checked);
-        if (byId("show-topbar").checked){
-            document.getElementsByTagName("header")[0].style.visibility = "hidden"
-        } else{
-            document.getElementsByTagName("header")[0].style.visibility = "visible"
+        let header = document.getElementsByTagName("header")[0]
+        if (byId("show-topbar").checked) {
+            header.style.visibility = "hidden"
+        } else {
+            header.style.visibility = "visible"
         }
     }
 
