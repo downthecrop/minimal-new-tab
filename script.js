@@ -3,8 +3,6 @@ const iconurl = "https://www.google.com/s2/favicons?domain=";
 const search = "http://www.google.com/search?q=";
 const dFavicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8"
 
-let byId = function (i) { return document.getElementById(i); };
-let byClass = function (c) { return document.getElementsByClassName(c)[0]; };
 let arrows = false
 
 async function getFavicon(url, callback) {
@@ -12,6 +10,9 @@ async function getFavicon(url, callback) {
     f.readAsDataURL(await fetch(url).then(r => r.blob()))
     f.onloadend = function () { callback(f.result) }
 }
+
+function byId(i) { return document.getElementById(i); };
+function byClass(c) { return document.getElementsByClassName(c)[0]; };
 
 function configureTiles(sites) {
     for (let i = 0; i < 8; i += 1) {
@@ -62,7 +63,7 @@ function setActive(e) {
 }
 
 function setInactive(e) {
-    e.setAttribute("class", "")
+    e.removeAttribute("class")
 }
 
 function jLocal(key) {
@@ -109,6 +110,16 @@ function settingsGUI() {
         localStorage.setItem("enable-custom", byId("enable-custom").checked);
     }
 
+    byId("show-topbar").checked = jLocal("show-topbar");
+    byId("show-topbar").onclick = function () {
+        localStorage.setItem("show-topbar", byId("show-topbar").checked);
+        if (byId("show-topbar").checked){
+            document.getElementsByTagName("header")[0].style.visibility = "hidden"
+        } else{
+            document.getElementsByTagName("header")[0].style.visibility = "visible"
+        }
+    }
+
     byId("clear-storage").onclick = function () {
         localStorage.clear()
         window.location.reload()
@@ -123,7 +134,7 @@ function submitSearch(query) {
     }
 }
 
-function arrowNav (move) {
+function arrowNav(move) {
     let active = (byClass("result-item-active")) ? byClass("result-item-active") : byClass("result-item-active-last")
     if (!active) {
         //Default to result-0 if nothing is active
@@ -139,7 +150,8 @@ function arrowNav (move) {
 }
 
 function clearResults() {
-    byId("results").innerHTML = ""
+    let clean = byId("results").cloneNode(false);
+    byId("results").parentNode.replaceChild(clean, byId("results"));
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -169,14 +181,15 @@ document.addEventListener("DOMContentLoaded", function () {
             fetch(url + ginput)
                 .then(r => r.json())
                 .then(j => function () {
+                    j = j[1]
                     clearResults();
-                    for (let i = 0; i < j[1].length; i += 1) {
+                    for (let i = 0; i < j.length; i += 1) {
                         let a = document.createElement("div")
                         let b = document.createElement("div")
                         let c = document.createElement("span")
-                        c.innerText = j[1][i]
+                        c.innerText = j[i]
                         b.id = "result-" + i
-                        b.className = (i != j[1].length - 1) ? "result-item" : "result-item-last"
+                        b.className = (i != j.length - 1) ? "result-item" : "result-item-last"
                         b.appendChild(c)
                         a.appendChild(b)
                         a.addEventListener("mouseenter", function () { setActive(this) })
@@ -203,7 +216,10 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.topSites.get(function (sites) {
         configureTiles(sites)
     })
- 
+
+    if (JSON.parse(localStorage.getItem("show-topbar")))
+        document.getElementsByTagName("header")[0].style.visibility = "hidden"
+
     function initSettings() {
         if (jLocal("site-" + 7)) {
             settingsGUI()
