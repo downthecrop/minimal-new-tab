@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (ginput.length < 2) {
             clearResults();
             arrows = false
-            byClass("grid-container").style.visibility = "visible";
+            byClass("grid-container").style.display = "";
         } else if (e.key === "ArrowDown") {
             arrowNav(1)
         } else if (e.key === "ArrowUp") {
@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         byId("results").appendChild(a)
                     }
                 }())
-            byClass("grid-container").style.visibility = "hidden";
+            byClass("grid-container").style.display = "none";
             console.log("Last search: " + lastsearch);
         }
     }
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (e.target.parentElement.className.includes("result-item")) {
                 submitSearch(e.target.innerText)
             } else {
-                byClass("grid-container").style.visibility = "visible";
+                byClass("grid-container").style.display = "";
                 clearResults();
             }
         }
