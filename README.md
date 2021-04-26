@@ -4,6 +4,10 @@ I really don't like google doodles on my newtab pages. Unfortunatly due to some 
 
 This is an all in one drop in replacement for the Chrome new tab.
 
+## Download
+
+[Chrome Store](https://chrome.google.com/webstore/detail/minimal-new-tab/afnmoecpnepccekbinlapeolhgdgjclm)
+
 ## Preview
 
 ![](https://i.imgur.com/S7nclwu.png)
