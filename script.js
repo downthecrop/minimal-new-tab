@@ -9,13 +9,9 @@ async function getFavicon(url, callback) {
     if (url) {
         let f = new FileReader()
         f.readAsDataURL(await fetch(iconurl + url).then(r => r.blob()))
-        f.onloadend = function () {
-            callback(f.result)
-        }
+        f.onloadend = function () { callback(f.result) }
     }
-    else {
-        callback("")
-    }
+    else { callback("") }
 }
 
 function byId(i) { return document.getElementById(i); };
@@ -53,9 +49,7 @@ function displaySiteData(i) {
 
 function setLocalStorage(site, i) {
     getFavicon(site.url, function (dataUrl) {
-        console.log(dataUrl +" and "+dFavicon)
         let icon = dataUrl.includes(dFavicon) ? "" : dataUrl;
-        console.log(dataUrl.includes(dFavicon))
         let j = {
             "title": site.title,
             "url": site.url,
