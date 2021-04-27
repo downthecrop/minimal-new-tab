@@ -1,4 +1,4 @@
-const url = "http://suggestqueries.google.com/complete/search?client=chrome&q=";
+const suggestions = "http://suggestqueries.google.com/complete/search?client=chrome&q=";
 const iconurl = "https://www.google.com/s2/favicons?domain=";
 const search = "http://www.google.com/search?q=";
 const dFavicon = "4bKMCAYnuqm7cHOGHJTBRhAEJN9d/t5zCxAAAAAElFTkSuQmCC"
@@ -48,12 +48,11 @@ function displaySiteData(i) {
 }
 
 function setLocalStorage(site, i) {
-    getFavicon(site.url, function (dataUrl) {
-        let icon = dataUrl.includes(dFavicon) ? "" : dataUrl;
+    getFavicon(site.url, function (b64) {
         let j = {
             "title": site.title,
             "url": site.url,
-            "favicon": icon
+            "favicon": b64.includes(dFavicon) ? "" : b64
         }
         localStorage.setItem("site-" + i, JSON.stringify(j))
         displaySiteData(i)
@@ -160,7 +159,7 @@ function clearResults() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    let lastsearch = ""
+    let lastSearch = ""
 
     //Keyboard Events for Suggestions
     byId("ginput").onkeydown = function (e) {
@@ -180,10 +179,10 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (ginput) {
                 submitSearch(ginput)
             }
-        } else if (lastsearch != ginput
+        } else if (lastSearch != ginput
             && !/^(http|https)/.test(ginput)) {
-            lastsearch = ginput
-            fetch(url + ginput)
+            lastSearch = ginput
+            fetch(suggestions + ginput)
                 .then(r => r.json())
                 .then(j => function () {
                     j = j[1]
@@ -203,7 +202,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }())
             byClass("grid-container").style.display = "none";
-            console.log("Last search: " + lastsearch);
         }
     }
 
@@ -222,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function () {
         configureTiles(sites)
     })
 
-    if (JSON.parse(localStorage.getItem("show-topbar")))
+    if (jLocal("show-topbar"))
         document.getElementsByTagName("header")[0].style.visibility = "hidden"
 
     function initSettings() {
