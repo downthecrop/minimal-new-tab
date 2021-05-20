@@ -1,5 +1,6 @@
 :root {
 	--custom-bg: #000;
+	--custom-result-active: #1a1a1a;
 	--custom-text: #fff;
 	--custom-head-text: #fff;
 	--ntp-theme-text-shadow: 0 0 16px rgba(0, 0, 0, .3);
@@ -28,7 +29,7 @@
 }
 
 .result-item-active {
-	background-color: #1a1a1a;
+	background-color: var(--custom-result-active);
 }
 
 #ext-menu {
@@ -80,11 +81,11 @@
 	font-size: 16px;
 	display: block;
 	text-align: left;
-	color: white;
+	color: var(--custom-text);
 }
 
 .result-item-active-last {
-	background-color: #1a1a1a;
+	background-color: var(--custom-result-active);
 	border-bottom-left-radius: 30px;
 	border-bottom-right-radius: 30px;
 }
@@ -97,7 +98,7 @@
 	font-size: 16px;
 	display: block;
 	text-align: left;
-	color: white;
+	color: var(--custom-text);
 }
 
 .grid-container>div {
@@ -108,14 +109,14 @@
 }
 
 .grid-container>div:hover {
-	background-color: #1a1a1a;
+	background-color: var(--custom-result-active);
 }
 
 .dot {
 	height: 32px;
 	width: 32px;
 	z-index: 1;
-	background-color: #1a1a1a;
+	background-color: var(--custom-result-active);
 	border-radius: 50%;
 	display: inline-block;
 }
