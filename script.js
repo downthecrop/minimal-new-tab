@@ -113,6 +113,27 @@ function settingsGUI() {
         localStorage.setItem("enable-custom", byId("enable-custom").checked);
     }
 
+    byId("background-color").addEventListener("input", function(){
+        localStorage.setItem("background-color",byId("background-color").value)
+    })
+    byId("active-color").addEventListener("input", function(){
+        localStorage.setItem("active-color",byId("active-color").value)
+    })
+    byId("text-color").addEventListener("input", function(){
+        localStorage.setItem("text-color",byId("text-color").value)
+    })
+
+    byId("enable-color").onclick = function () {
+        byId("background-color").value = localStorage.getItem("background-color")
+        byId("active-color").value = localStorage.getItem("active-color")
+        byId("text-color").value = localStorage.getItem("text-color")
+
+        if(byId("enable-color").checked)
+            byId("color-edit").style.display = "block"
+        else
+            byId("color-edit").style.display = "none"
+    }
+
     byId("show-topbar").checked = jLocal("show-topbar");
     byId("show-topbar").onclick = function () {
         localStorage.setItem("show-topbar", byId("show-topbar").checked);
@@ -219,6 +240,17 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.topSites.get(function (sites) {
         configureTiles(sites)
     })
+
+    //Custom Colors
+    if(localStorage.getItem("active-color")){
+        document.documentElement.style.setProperty('--custom-result-active', localStorage.getItem("active-color"));
+    }
+    if(localStorage.getItem("background-color")){
+        document.documentElement.style.setProperty('--custom-bg', localStorage.getItem("background-color"));
+    }
+    if(localStorage.getItem("text-color")){
+        document.documentElement.style.setProperty('--custom-text', localStorage.getItem("text-color"));
+    }
 
     if (jLocal("show-topbar"))
         document.getElementsByTagName("header")[0].style.visibility = "hidden"
