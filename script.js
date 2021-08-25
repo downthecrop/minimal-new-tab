@@ -4,6 +4,7 @@ const search = "http://www.google.com/search?q=";
 const dFavicon = "4bKMCAYnuqm7cHOGHJTBRhAEJN9d/t5zCxAAAAAElFTkSuQmCC"
 
 let arrows = false
+let nSites
 
 async function getFavicon(url, callback) {
     if (url) {
@@ -18,7 +19,7 @@ function byId(i) { return document.getElementById(i); };
 function byClass(c) { return document.getElementsByClassName(c)[0]; };
 
 function configureTiles(sites) {
-    for (let i = 0; i < 8; i += 1) {
+    for (let i = 0; i <= nSites; i += 1) {
         let data = jLocal("site-" + i)
         if ((!data || data.url != sites[i].url) && !jLocal("enable-custom")) {
             setLocalStorage(sites[i], i)
@@ -95,7 +96,7 @@ function settingsGUI() {
     }
 
     //Title & URL GUI
-    for (let i = 0; i < 8; i += 1) {
+    for (let i = 0; i <= nSites; i += 1) {
         let j = jLocal("site-" + i)
         let title = byId("edit-title-" + i)
         let url = byId("edit-link-" + i)
@@ -238,6 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
 
     chrome.topSites.get(function (sites) {
+        if (nSites > 7) nSites = 7; else sites.length-1
         configureTiles(sites)
     })
 
@@ -256,8 +258,10 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementsByTagName("header")[0].style.visibility = "hidden"
 
     function initSettings() {
-        if (jLocal("site-" + 7)) {
-            settingsGUI()
+        if (nSites){
+            if (jLocal("site-" + nSites)) {
+                settingsGUI()
+            }
         }
     }
     setTimeout(initSettings, 100);
