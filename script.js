@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
 
     chrome.topSites.get(function (sites) {
-        if (nSites > 7) nSites = 7; else sites.length-1
+        if (nSites > 7) nSites = 7; else nSites = sites.length-1
         configureTiles(sites)
     })
 
