@@ -1,9 +1,9 @@
-const suggestions = "http://suggestqueries.google.com/complete/search?client=chrome&q=";
-const iconurl = "https://www.google.com/s2/favicons?domain=";
-const search = "http://www.google.com/search?q=";
+const suggestions = "http://suggestqueries.google.com/complete/search?client=chrome&q="
+const iconurl = "https://www.google.com/s2/favicons?domain="
+const search = "http://www.google.com/search?q="
 const dFavicon = "4bKMCAYnuqm7cHOGHJTBRhAEJN9d/t5zCxAAAAAElFTkSuQmCC"
 
-let arrows = false
+let arrows
 let nSites
 
 async function getFavicon(url, callback) {
@@ -15,8 +15,8 @@ async function getFavicon(url, callback) {
     else { callback("") }
 }
 
-function byId(i) { return document.getElementById(i); };
-function byClass(c) { return document.getElementsByClassName(c)[0]; };
+function byId(i) { return document.getElementById(i) }
+function byClass(c) { return document.getElementsByClassName(c)[0] }
 
 function configureTiles(sites) {
     for (let i = 0; i <= nSites; i += 1) {
@@ -31,21 +31,21 @@ function configureTiles(sites) {
 
 function displaySiteData(i) {
     let data = jLocal("site-" + i)
-    let div = byId("item" + i);
-    let link = document.createElement("link");
+    let div = byId("item" + i)
+    let link = document.createElement("link")
 
     div.style.visibility = "visible"
     div.setAttribute("url", data.url)
-    div.getElementsByClassName("tile-title")[0].innerHTML = data.title;
-    div.addEventListener("click", function () { location.assign(this.getAttribute("url")) });
-    div.title = data.url;
+    div.getElementsByClassName("tile-title")[0].innerHTML = data.title
+    div.addEventListener("click", function () { location.assign(this.getAttribute("url")) })
+    div.title = data.url
 
     if (data.favicon)
-        div.querySelectorAll("img")[0].src = data.favicon;
+        div.querySelectorAll("img")[0].src = data.favicon
 
-    link.rel = "prerender";
-    link.href = data.url;
-    document.head.appendChild(link);
+    link.rel = "prerender"
+    link.href = data.url
+    document.head.appendChild(link)
 }
 
 function setLocalStorage(site, i) {
@@ -62,8 +62,8 @@ function setLocalStorage(site, i) {
 
 function setActive(e) {
     let name = "result-item-active"
-    let r_class = (e.children[0].className.includes("last")) ? name + "-last" : name;
-    e.setAttribute("class", r_class)
+    let rClass = (e.children[0].className.includes("last")) ? name + "-last" : name
+    e.setAttribute("class", rClass)
 }
 
 function setInactive(e) {
@@ -88,14 +88,14 @@ function settingsGUI() {
     let openbtn = byId("settings-menu")
     let closebtn = byClass("close")
 
-    openbtn.onclick = function () { modal.style.display = "block"; }
-    closebtn.onclick = function () { modal.style.display = "none"; }
+    openbtn.onclick = function () { modal.style.display = "block" }
+    closebtn.onclick = function () { modal.style.display = "none" }
     window.onclick = function (e) {
         if (e.target === modal)
-            modal.style.display = "none";
+            modal.style.display = "none"
     }
 
-    //Title & URL GUI
+    // Title & URL GUI
     for (let i = 0; i <= nSites; i += 1) {
         let j = jLocal("site-" + i)
         let title = byId("edit-title-" + i)
@@ -108,20 +108,21 @@ function settingsGUI() {
         url.addEventListener("input", function () { updateStorage(i) })
     }
 
-    //Custom URLs and Titles
-    byId("enable-custom").checked = jLocal("enable-custom");
+    // Custom URLs and Titles
+    byId("enable-custom").checked = jLocal("enable-custom")
     byId("enable-custom").onclick = function () {
-        localStorage.setItem("enable-custom", byId("enable-custom").checked);
+        localStorage.setItem("enable-custom", byId("enable-custom").checked)
     }
 
-    byId("background-color").addEventListener("input", function(){
-        localStorage.setItem("background-color",byId("background-color").value)
+    // Custom colors
+    byId("background-color").addEventListener("input", function () {
+        localStorage.setItem("background-color", byId("background-color").value)
     })
-    byId("active-color").addEventListener("input", function(){
-        localStorage.setItem("active-color",byId("active-color").value)
+    byId("active-color").addEventListener("input", function () {
+        localStorage.setItem("active-color", byId("active-color").value)
     })
-    byId("text-color").addEventListener("input", function(){
-        localStorage.setItem("text-color",byId("text-color").value)
+    byId("text-color").addEventListener("input", function () {
+        localStorage.setItem("text-color", byId("text-color").value)
     })
 
     byId("enable-color").onclick = function () {
@@ -129,15 +130,15 @@ function settingsGUI() {
         byId("active-color").value = localStorage.getItem("active-color")
         byId("text-color").value = localStorage.getItem("text-color")
 
-        if(byId("enable-color").checked)
+        if (byId("enable-color").checked)
             byId("color-edit").style.display = "block"
         else
             byId("color-edit").style.display = "none"
     }
 
-    byId("show-topbar").checked = jLocal("show-topbar");
+    byId("show-topbar").checked = jLocal("show-topbar")
     byId("show-topbar").onclick = function () {
-        localStorage.setItem("show-topbar", byId("show-topbar").checked);
+        localStorage.setItem("show-topbar", byId("show-topbar").checked)
         let header = document.getElementsByTagName("header")[0]
         if (byId("show-topbar").checked) {
             header.style.visibility = "hidden"
@@ -154,42 +155,42 @@ function settingsGUI() {
 
 function submitSearch(query) {
     if (/^(http|https)/.test(query)) {
-        location.assign(query);
+        location.assign(query)
     } else {
-        location.assign(search + query);
+        location.assign(search + query)
     }
 }
 
 function arrowNav(move) {
     let active = (byClass("result-item-active")) ? byClass("result-item-active") : byClass("result-item-active-last")
     if (!active) {
-        //Default to result-0 if nothing is active
+        // Default to result-0 if nothing is active
         setActive(byId("result-0").parentElement)
         active = byClass("result-item-active")
         move = 0
     }
     let id = active.children[0].id
-    let i = parseInt(id[id.length - 1]);
+    let i = parseInt(id[id.length - 1])
     arrows = true
     setInactive(active)
     setActive(byId("result-" + (i + move)).parentElement)
 }
 
 function clearResults() {
-    let clean = byId("results").cloneNode(false);
-    byId("results").parentNode.replaceChild(clean, byId("results"));
+    let clean = byId("results").cloneNode(false)
+    byId("results").parentNode.replaceChild(clean, byId("results"))
 }
 
 document.addEventListener("DOMContentLoaded", function () {
     let lastSearch = ""
 
-    //Keyboard Events for Suggestions
+    // Keyboard Events for Suggestions
     byId("ginput").onkeydown = function (e) {
         let ginput = byId("ginput").value
         if (ginput.length < 2) {
-            clearResults();
+            clearResults()
             arrows = false
-            byClass("grid-container").style.display = "";
+            byClass("grid-container").style.display = ""
         } else if (e.key === "ArrowDown") {
             arrowNav(1)
         } else if (e.key === "ArrowUp") {
@@ -208,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(r => r.json())
                 .then(j => function () {
                     j = j[1]
-                    clearResults();
+                    clearResults()
                     for (let i = 0; i < j.length; i += 1) {
                         let a = document.createElement("div")
                         let b = document.createElement("div")
@@ -223,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         byId("results").appendChild(a)
                     }
                 }())
-            byClass("grid-container").style.display = "none";
+            byClass("grid-container").style.display = "none"
         }
     }
 
@@ -232,37 +233,42 @@ document.addEventListener("DOMContentLoaded", function () {
             if (e.target.parentElement.className.includes("result-item")) {
                 submitSearch(e.target.innerText)
             } else {
-                byClass("grid-container").style.display = "";
-                clearResults();
+                byClass("grid-container").style.display = ""
+                clearResults()
             }
         }
     })
 
     chrome.topSites.get(function (sites) {
-        if (sites.length-1 > 7) nSites = 7; else nSites = sites.length-1
+        // Max topsites at 8 (0-7)
+        if (sites.length - 1 > 7)
+            nSites = 7
+        else nSites
+        sites.length - 1
+
         configureTiles(sites)
     })
 
-    //Custom Colors
-    if(localStorage.getItem("active-color")){
-        document.documentElement.style.setProperty('--custom-result-active', localStorage.getItem("active-color"));
+    // Load custom Colors
+    if (localStorage.getItem("active-color")) {
+        document.documentElement.style.setProperty('--custom-result-active', localStorage.getItem("active-color"))
     }
-    if(localStorage.getItem("background-color")){
-        document.documentElement.style.setProperty('--custom-bg', localStorage.getItem("background-color"));
+    if (localStorage.getItem("background-color")) {
+        document.documentElement.style.setProperty('--custom-bg', localStorage.getItem("background-color"))
     }
-    if(localStorage.getItem("text-color")){
-        document.documentElement.style.setProperty('--custom-text', localStorage.getItem("text-color"));
+    if (localStorage.getItem("text-color")) {
+        document.documentElement.style.setProperty('--custom-text', localStorage.getItem("text-color"))
     }
 
     if (jLocal("show-topbar"))
         document.getElementsByTagName("header")[0].style.visibility = "hidden"
 
     function initSettings() {
-        if (nSites){
+        if (nSites) {
             if (jLocal("site-" + nSites)) {
                 settingsGUI()
             }
         }
     }
-    setTimeout(initSettings, 100);
+    setTimeout(initSettings, 100)
 })
