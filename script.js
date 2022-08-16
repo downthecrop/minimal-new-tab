@@ -1,5 +1,5 @@
 const suggestions = "http://suggestqueries.google.com/complete/search?client=chrome&q=";
-const iconurl = "https://www.google.com/s2/favicons?domain=";
+const iconurl = "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=";
 const search = "http://www.google.com/search?q=";
 const dFavicon = "4bKMCAYnuqm7cHOGHJTBRhAEJN9d/t5zCxAAAAAElFTkSuQmCC";
 
@@ -9,7 +9,8 @@ let nSites;
 async function getFavicon(url, callback) {
     if (url) {
         let f = new FileReader();
-        f.readAsDataURL(await fetch(iconurl + url).then((r) => r.blob()));
+        f.readAsDataURL(await fetch(iconurl + url)
+        .then((r) => r.blob()));
         f.onloadend = function () { callback(f.result); };
     }
     else { callback(""); }
@@ -37,7 +38,8 @@ function displaySiteData(i) {
     div.style.visibility = "visible";
     div.setAttribute("url", data.url);
     div.getElementsByClassName("tile-title")[0].innerHTML = data.title;
-    div.addEventListener("click", function () { location.assign(this.getAttribute("url")); });
+    div.addEventListener("click",
+        function () { location.assign(this.getAttribute("url")); });
     div.title = data.url;
 
     if (data.favicon)
@@ -62,7 +64,11 @@ function setLocalStorage(site, i) {
 
 function setActive(e) {
     let name = "result-item-active";
-    let rClass = (e.children[0].className.includes("last")) ? name + "-last" : name;
+    let rClass;
+    if (e.children[0].className.includes("last"))
+        rClass = name + "-last";
+    else
+        rClass = name;
     e.setAttribute("class", rClass);
 }
 
@@ -116,13 +122,16 @@ function settingsGUI() {
 
     // Custom colors
     byId("background-color").addEventListener("input", function () {
-        localStorage.setItem("background-color", byId("background-color").value);
+        localStorage.setItem("background-color",
+            byId("background-color").value);
     });
     byId("active-color").addEventListener("input", function () {
-        localStorage.setItem("active-color", byId("active-color").value);
+        localStorage.setItem("active-color",
+            byId("active-color").value);
     });
     byId("text-color").addEventListener("input", function () {
-        localStorage.setItem("text-color", byId("text-color").value);
+        localStorage.setItem("text-color",
+            byId("text-color").value);
     });
 
     byId("enable-color").onclick = function () {
@@ -162,15 +171,23 @@ function submitSearch(query) {
 }
 
 function arrowNav(move) {
-    let active = (byClass("result-item-active")) ? byClass("result-item-active") : byClass("result-item-active-last");
+    let active;
+
+    if (byClass("result-item-active"))
+        active = byClass("result-item-active");
+    else
+        active = byClass("result-item-active-last");
+
     if (!active) {
         // Default to result-0 if nothing is active
         setActive(byId("result-0").parentElement);
         active = byClass("result-item-active");
         move = 0;
     }
+
     let id = active.children[0].id;
     let i = parseInt(id[id.length - 1]);
+
     arrows = true;
     setInactive(active);
     setActive(byId("result-" + (i + move)).parentElement);
@@ -187,6 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Keyboard Events for Suggestions
     byId("ginput").onkeydown = function (e) {
         let ginput = byId("ginput").value;
+        let active;
         if (ginput.length < 2) {
             clearResults();
             arrows = false;
@@ -196,7 +214,11 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (e.key === "ArrowUp") {
             arrowNav(-1);
         } else if (e.key === "Enter") {
-            let active = (byClass("result-item-active")) ? byClass("result-item-active") : byClass("result-item-active-last");
+            if (byClass("result-item-active"))
+                active = byClass("result-item-active");
+            else
+                active = byClass("result-item-active-last");
+
             if (active && arrows) {
                 submitSearch(active.innerText);
             } else if (ginput) {
@@ -216,11 +238,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         let c = document.createElement("span");
                         c.innerText = j[i];
                         b.id = "result-" + i;
-                        b.className = (i != j.length - 1) ? "result-item" : "result-item-last";
+                        if (i != j.length - 1)
+                            b.className = "result-item";
+                        else
+                            b.className = "result-item-last";
                         b.appendChild(c);
                         a.appendChild(b);
-                        a.addEventListener("mouseenter", function () { setActive(this); });
-                        a.addEventListener("mouseout", function () { setInactive(this); });
+                        a.addEventListener("mouseenter",
+                            function () { setActive(this); });
+                        a.addEventListener("mouseout",
+                            function () { setInactive(this); });
                         byId("results").appendChild(a);
                     }
                 }());
@@ -251,13 +278,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load custom Colors
     if (localStorage.getItem("active-color")) {
-        document.documentElement.style.setProperty("--custom-result-active", localStorage.getItem("active-color"));
+        document.documentElement.style.setProperty("--custom-result-active",
+            localStorage.getItem("active-color"));
     }
     if (localStorage.getItem("background-color")) {
-        document.documentElement.style.setProperty("--custom-bg", localStorage.getItem("background-color"));
+        document.documentElement.style.setProperty("--custom-bg",
+            localStorage.getItem("background-color"));
     }
     if (localStorage.getItem("text-color")) {
-        document.documentElement.style.setProperty("--custom-text", localStorage.getItem("text-color"));
+        document.documentElement.style.setProperty("--custom-text",
+            localStorage.getItem("text-color"));
     }
 
     if (jLocal("show-topbar"))

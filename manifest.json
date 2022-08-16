@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Minimal New Tab",
-	"version": "1.4",
+	"version": "1.5",
 	"description": "newtab",
 	"chrome_url_overrides": {
 		"newtab": "index.html"
@@ -11,6 +11,6 @@
 		"activeTab",
 		"topSites",
 		"*://suggestqueries.google.com/complete/*",
-		"https://www.google.com/s2/favicons?domain="
+		"https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=*"
 	]
 }
