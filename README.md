@@ -19,6 +19,7 @@ This is an all in one drop in replacement for the Chrome new tab.
 - True Dark Theme 
 - Chrome Top Sites
 - Custom Top Sites
+- Custom colors
 - Search Bar with Suggestions
 - No configuration required
 - Fast!
