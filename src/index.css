@@ -6,6 +6,11 @@
 	--ntp-theme-text-shadow: 0 0 16px rgba(0, 0, 0, .3);
 }
 
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
 .grid-container {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
@@ -39,8 +44,12 @@
 	padding: 10px;
 }
 
+#color-edit {
+	margin: auto;
+	width: 50%
+}
+
 .modal {
-	display: none;
 	position: fixed;
 	z-index: 100;
 	left: 0;
@@ -50,6 +59,14 @@
 	overflow: auto;
 	background-color: rgba(0, 0, 0, 0.4);
 }
+
+.modal-open {
+	display: block;
+  }
+  
+  .modal-closed {
+	display: none;
+  }
 
 .modal-content {
 	background-color: #fefefe;
@@ -146,6 +163,10 @@
 body {
 	background-color: var(--custom-bg);
 	text-align: center;
+	display: block;
+	margin: 8px;
+	font-family: "Segoe UI", Tahoma, sans-serif;
+	font-size: 75%;
 }
 
 ul {
@@ -220,9 +241,11 @@ li a:hover {
 
 .voice {
 	height: 20px;
+	width: 14px;
 	position: relative;
 	top: 5px;
 	left: 10px;
+	content: url("./img/mic.png");
 }
 
 .buttons {

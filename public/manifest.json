@@ -1,16 +1,20 @@
 {
-	"manifest_version": 2,
+	"manifest_version": 3,
 	"name": "Minimal New Tab",
-	"version": "1.6",
+	"version": "1.7",
 	"description": "newtab",
-	"chrome_url_overrides": {
-		"newtab": "index.html"
+	"action": {
+		"default_popup": "index.html"
 	},
-	"incognito": "split",
 	"permissions": [
 		"activeTab",
-		"topSites",
+		"topSites"
+	],
+	"host_permissions": [
 		"*://suggestqueries.google.com/complete/*",
 		"https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=*"
-	]
+	],
+	"chrome_url_overrides": {
+		"newtab": "index.html"
+	}
 }
