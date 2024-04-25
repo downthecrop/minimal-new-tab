@@ -1,13 +1,12 @@
 {
 	"manifest_version": 3,
 	"name": "Minimal New Tab",
-	"version": "1.7",
+	"version": "1.8",
 	"description": "newtab",
 	"action": {
 		"default_popup": "index.html"
 	},
 	"permissions": [
-		"activeTab",
 		"topSites"
 	],
 	"host_permissions": [
